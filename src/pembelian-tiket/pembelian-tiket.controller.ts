@@ -23,7 +23,7 @@ export class PembelianTiketController {
   constructor(private pembelianTiketService: PembelianTiketService) {}
 
   // Pelanggan pesan tiket
-  @Roles('penumpang')
+  @Roles('penumpang', 'admin') // Admin juga bisa buat pemesanan untuk pelanggan
   @Post()
   @ApiOperation({ summary: 'Create a new pembelian tiket' })
   create(@Body() dto: CreatePembelianTiketDto, @Request() req) {
