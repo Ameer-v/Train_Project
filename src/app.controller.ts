@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 
@@ -11,17 +10,3 @@ export class AppController {
     return this.appService.getHello();
   }
 }
-=======
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-}
->>>>>>> 184adbabf946bbf2426fdf94dbbe1144ba641b15

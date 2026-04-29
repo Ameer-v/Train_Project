@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
@@ -7,13 +6,3 @@
     "deleteOutDir": true
   }
 }
-=======
-{
-  "$schema": "https://json.schemastore.org/nest-cli",
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "deleteOutDir": true
-  }
-}
->>>>>>> 184adbabf946bbf2426fdf94dbbe1144ba641b15
