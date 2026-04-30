@@ -25,20 +25,28 @@ export class KursiService {
   }
 
   async findTersediaByJadwal(id_jadwal: number) {
+    // Ambil id_kereta dari jadwal yang dipilih
+    const jadwal = await this.prisma.jadwal.findUnique({
+      where: { id: id_jadwal },
+      select: { id_kereta: true },
+    });
+    if (!jadwal) throw new NotFoundException('Jadwal tidak ditemukan');
+
     // Cari semua id_kursi yang sudah dipesan pada jadwal ini
     const sudahDipesan = await this.prisma.detail_pembelian.findMany({
-      where: {
-        pembelian_tiket: { id_jadwal },
-      },
+      where: { pembelian_tiket: { id_jadwal } },
       select: { id_kursi: true },
     });
 
     const idKursiDipesan = sudahDipesan.map((d) => d.id_kursi);
 
-    // Ambil semua kursi yang id-nya TIDAK ada di daftar yang sudah dipesan
+    // Ambil kursi yang:
+    // 1. Belum dipesan
+    // 2. Gerbongnya milik kereta yang sesuai dengan jadwal
     return this.prisma.kursi.findMany({
       where: {
         id: { notIn: idKursiDipesan.length > 0 ? idKursiDipesan : [-1] },
+        gerbong: { id_kereta: jadwal.id_kereta },
       },
       include: {
         gerbong: {
@@ -49,10 +57,15 @@ export class KursiService {
   }
 
   async findTersediaByJadwalDanGerbong(id_jadwal: number, id_gerbong: number) {
+    // Ambil id_kereta dari jadwal yang dipilih
+    const jadwal = await this.prisma.jadwal.findUnique({
+      where: { id: id_jadwal },
+      select: { id_kereta: true },
+    });
+    if (!jadwal) throw new NotFoundException('Jadwal tidak ditemukan');
+
     const sudahDipesan = await this.prisma.detail_pembelian.findMany({
-      where: {
-        pembelian_tiket: { id_jadwal },
-      },
+      where: { pembelian_tiket: { id_jadwal } },
       select: { id_kursi: true },
     });
 
@@ -62,16 +75,24 @@ export class KursiService {
       where: {
         id_gerbong,
         id: { notIn: idKursiDipesan.length > 0 ? idKursiDipesan : [-1] },
+        gerbong: { id_kereta: jadwal.id_kereta },
       },
-      include: { gerbong: true },
+      include: {
+        gerbong: { include: { kereta: true } },
+      },
     });
   }
 
   async findDipesanByJadwal(id_jadwal: number) {
+    // Ambil id_kereta dari jadwal yang dipilih
+    const jadwal = await this.prisma.jadwal.findUnique({
+      where: { id: id_jadwal },
+      select: { id_kereta: true },
+    });
+    if (!jadwal) throw new NotFoundException('Jadwal tidak ditemukan');
+
     const sudahDipesan = await this.prisma.detail_pembelian.findMany({
-      where: {
-        pembelian_tiket: { id_jadwal },
-      },
+      where: { pembelian_tiket: { id_jadwal } },
       select: { id_kursi: true },
     });
 
@@ -80,8 +101,11 @@ export class KursiService {
     return this.prisma.kursi.findMany({
       where: {
         id: { in: idKursiDipesan.length > 0 ? idKursiDipesan : [-1] },
+        gerbong: { id_kereta: jadwal.id_kereta },
       },
-      include: { gerbong: true },
+      include: {
+        gerbong: { include: { kereta: true } },
+      },
     });
   }
 
